@@ -1,0 +1,4 @@
+name,fixedCost,tax,currencyCode
+"United Kingdom",600,25,"GBP"
+"Germany",800,20,"EUR"
+"Poland",1200,19,"PLN"
