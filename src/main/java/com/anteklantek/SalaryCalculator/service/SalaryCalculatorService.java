@@ -2,36 +2,56 @@ package com.anteklantek.SalaryCalculator.service;
 
 import com.anteklantek.SalaryCalculator.client.ExchangeClient;
 import com.anteklantek.SalaryCalculator.client.viewmodel.RateViewModel;
+import com.anteklantek.SalaryCalculator.controller.viewmodel.SalaryListViewModel;
 import com.anteklantek.SalaryCalculator.controller.viewmodel.SalaryViewModel;
+import com.anteklantek.SalaryCalculator.model.Country;
 import com.anteklantek.SalaryCalculator.properties.CalculateSalaryProperties;
 import com.anteklantek.SalaryCalculator.repository.CountryRepository;
-import com.anteklantek.SalaryCalculator.controller.viewmodel.SalaryListViewModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
+import java.math.RoundingMode;
 
 @Service
 public class SalaryCalculatorService {
 
     @Autowired
-    CalculateSalaryProperties calculateSalaryProperties;
+    private CalculateSalaryProperties calculateSalaryProperties;
 
     @Autowired
-    CountryRepository countryRepository;
+    private CountryRepository countryRepository;
 
     @Autowired
-    ExchangeClient exchangeClient;
+    private ExchangeClient exchangeClient;
 
-    public SalaryListViewModel getMonthSalariesForDayGrossSalary(BigDecimal dayGrossSalary){
+    public SalaryListViewModel getMonthSalariesForDayGrossSalary(BigDecimal dayGrossSalary) {
+        SalaryListViewModel salaryListViewModel = new SalaryListViewModel();
+        for (String countryName : calculateSalaryProperties.getCountries()) {
+            Country country = countryRepository.findFirstByName(countryName);
+            RateViewModel rateViewModel = exchangeClient.getExchangeRateByCode(country.getCurrencyCode());
+            BigDecimal monthSalary = calculateMonthSalary(dayGrossSalary, country, rateViewModel);
+            SalaryViewModel salaryViewModel = new SalaryViewModel(countryName, monthSalary, rateViewModel.getTableEffectiveDate());
+            salaryListViewModel.getSalaryItemsList().add(salaryViewModel);
+        }
 
-        SalaryViewModel salaryViewModel = new SalaryViewModel();
-        salaryViewModel.setCountry("Great Britian");
-        salaryViewModel.setSalary(dayGrossSalary.multiply(new BigDecimal("22")));
-        return new SalaryListViewModel(Collections.singletonList(salaryViewModel));
+        return salaryListViewModel;
     }
 
+    private BigDecimal calculateMonthSalary(BigDecimal dayGrossSalary, Country country, RateViewModel rateViewModel) {
+        BigDecimal monthSalaryAfterFixedCostAndTaxes = getMonthSalaryAfterFixedCostAndTax(dayGrossSalary, country);
+        return getMonthSalaryInPLN(rateViewModel.getRateValue(), monthSalaryAfterFixedCostAndTaxes);
+    }
 
+    private BigDecimal getMonthSalaryAfterFixedCostAndTax(BigDecimal dayGrossSalary, Country country) {
+        BigDecimal monthSalary = dayGrossSalary.multiply(BigDecimal.valueOf(22));
+        BigDecimal monthSalaryAfterFixedCost = monthSalary.subtract(country.getFixedCost());
+        BigDecimal tax = monthSalaryAfterFixedCost.multiply(BigDecimal.valueOf(country.getTax())).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+        return monthSalaryAfterFixedCost.subtract(tax);
+    }
 
+    private BigDecimal getMonthSalaryInPLN(BigDecimal rateValue, BigDecimal monthSalaryAfterFixedCostAndTaxes) {
+        BigDecimal monthSalaryInPLN = monthSalaryAfterFixedCostAndTaxes.multiply(rateValue);
+        return monthSalaryInPLN.setScale(2, RoundingMode.HALF_UP);
+    }
 }

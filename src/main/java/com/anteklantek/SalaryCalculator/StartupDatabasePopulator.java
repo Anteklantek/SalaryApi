@@ -16,7 +16,7 @@ import java.io.File;
 public class StartupDatabasePopulator implements CommandLineRunner {
 
     @Autowired
-    CountryRepository countryRepository;
+    private CountryRepository countryRepository;
 
     @Override
     public void run(String... args) throws Exception {

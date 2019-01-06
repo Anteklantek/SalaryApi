@@ -1,7 +1,7 @@
 package com.anteklantek.SalaryCalculator.controller;
 
-import com.anteklantek.SalaryCalculator.service.SalaryCalculatorService;
 import com.anteklantek.SalaryCalculator.controller.viewmodel.SalaryListViewModel;
+import com.anteklantek.SalaryCalculator.service.SalaryCalculatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +20,7 @@ public class SalaryController {
 
     @Autowired
     private SalaryCalculatorService salaryCalculatorService;
+
 
     @GetMapping(path = "/salary", produces = "application/json")
     public ResponseEntity<SalaryListViewModel> getRate(@RequestParam BigDecimal dayGrossSalary) {

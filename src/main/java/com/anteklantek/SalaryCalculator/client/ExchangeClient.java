@@ -4,7 +4,7 @@ import com.anteklantek.SalaryCalculator.client.viewmodel.RateViewModel;
 import com.anteklantek.SalaryCalculator.properties.ExchangeRateApiProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ExchangeClient {
 
     @Autowired
-    ExchangeRateApiProperties exchangeRateApiProperties;
+    private ExchangeRateApiProperties exchangeRateApiProperties;
 
     public RateViewModel getExchangeRateByCode(String code) {
 

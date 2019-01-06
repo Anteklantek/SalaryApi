@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -13,5 +14,6 @@ public class SalaryViewModel {
 
     private String country;
     private BigDecimal salary;
+    private LocalDate rateEffectiveDate;
 
 }
