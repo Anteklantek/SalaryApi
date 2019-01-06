@@ -15,5 +15,4 @@ public class SalaryViewModel {
     private String country;
     private BigDecimal salary;
     private LocalDate rateEffectiveDate;
-
 }

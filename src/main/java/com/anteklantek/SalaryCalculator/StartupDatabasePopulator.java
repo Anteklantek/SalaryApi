@@ -28,6 +28,5 @@ public class StartupDatabasePopulator implements CommandLineRunner {
             Country country = it.nextValue();
             countryRepository.save(country);
         }
-
     }
 }

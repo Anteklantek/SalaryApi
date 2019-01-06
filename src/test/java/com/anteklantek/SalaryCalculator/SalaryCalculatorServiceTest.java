@@ -63,6 +63,4 @@ public class SalaryCalculatorServiceTest {
         assertThat("List equality without order",
                 salaryListViewModelActual.getSalaryItemsList(), containsInAnyOrder(actualSalaries.toArray()));
     }
-
-
 }

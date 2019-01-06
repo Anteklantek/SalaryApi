@@ -29,5 +29,4 @@ public class TestObjectsFactory {
     public static Country getPoland() {
         return  new Country(101L,"Poland", BigDecimal.valueOf(1200),19,"PLN");
     }
-
 }

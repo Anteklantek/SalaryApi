@@ -35,5 +35,4 @@ public class Country {
 
     @NotNull
     private String currencyCode;
-
 }
