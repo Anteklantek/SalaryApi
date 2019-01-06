@@ -16,14 +16,15 @@ public class ExchangeClient {
     @Autowired
     private ExchangeRateApiProperties exchangeRateApiProperties;
 
+    /**
+     * Fetches currency rate from exchange microservice
+     * @param code code of currency to obtain data about
+     * @return RateViewModel representing currency, rate and date of rate
+     */
     public RateViewModel getExchangeRateByCode(String code) {
-
         final RestTemplate restTemplate = new RestTemplate();
-
-
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(exchangeRateApiProperties.getUrl())
                 .queryParam("code", code);
-
         ResponseEntity<RateViewModel> response = restTemplate.getForEntity(
                 builder.toUriString(),
                 RateViewModel.class);

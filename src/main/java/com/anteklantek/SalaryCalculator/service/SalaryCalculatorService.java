@@ -16,6 +16,8 @@ import java.math.RoundingMode;
 @Service
 public class SalaryCalculatorService {
 
+    public static final int NUMBER_OF_PAID_DAYS_IN_MONTH = 22;
+
     @Autowired
     private CalculateSalaryProperties calculateSalaryProperties;
 
@@ -25,12 +27,20 @@ public class SalaryCalculatorService {
     @Autowired
     private ExchangeClient exchangeClient;
 
+    /**
+     * calculates month (22 day) salary in pln given day gross salary for countries
+     * specifed as calculate-salary.countries in application.properites
+     * rate of currency conversion is obtained from exchchange microservice throug ExchangeClient
+     * and tax and fixed cost of country is obtained from database
+     * @param dayGrossSalary one day salary to calculate month salary
+     * @return model conataining List of SalaryViewModel of each country
+     */
     public SalaryListViewModel getMonthSalariesForDayGrossSalary(BigDecimal dayGrossSalary) {
         SalaryListViewModel salaryListViewModel = new SalaryListViewModel();
         for (String countryName : calculateSalaryProperties.getCountries()) {
             Country country = countryRepository.findFirstByName(countryName);
             RateViewModel rateViewModel = exchangeClient.getExchangeRateByCode(country.getCurrencyCode());
-            BigDecimal monthSalary = calculateMonthSalary(dayGrossSalary, country, rateViewModel);
+            BigDecimal monthSalary = calculateMonthSalaryInPLN(dayGrossSalary, country, rateViewModel.getRateValue());
             SalaryViewModel salaryViewModel = new SalaryViewModel(countryName, monthSalary, rateViewModel.getTableEffectiveDate());
             salaryListViewModel.getSalaryItemsList().add(salaryViewModel);
         }
@@ -38,19 +48,20 @@ public class SalaryCalculatorService {
         return salaryListViewModel;
     }
 
-    private BigDecimal calculateMonthSalary(BigDecimal dayGrossSalary, Country country, RateViewModel rateViewModel) {
+    private BigDecimal calculateMonthSalaryInPLN(BigDecimal dayGrossSalary, Country country, BigDecimal rateValue) {
         BigDecimal monthSalaryAfterFixedCostAndTaxes = getMonthSalaryAfterFixedCostAndTax(dayGrossSalary, country);
-        return getMonthSalaryInPLN(rateViewModel.getRateValue(), monthSalaryAfterFixedCostAndTaxes);
+        BigDecimal monthSalaryInPLN = convertToPln(rateValue, monthSalaryAfterFixedCostAndTaxes);
+        return monthSalaryInPLN;
     }
 
     private BigDecimal getMonthSalaryAfterFixedCostAndTax(BigDecimal dayGrossSalary, Country country) {
-        BigDecimal monthSalary = dayGrossSalary.multiply(BigDecimal.valueOf(22));
+        BigDecimal monthSalary = dayGrossSalary.multiply(BigDecimal.valueOf(NUMBER_OF_PAID_DAYS_IN_MONTH));
         BigDecimal monthSalaryAfterFixedCost = monthSalary.subtract(country.getFixedCost());
         BigDecimal tax = monthSalaryAfterFixedCost.multiply(BigDecimal.valueOf(country.getTax())).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
         return monthSalaryAfterFixedCost.subtract(tax);
     }
 
-    private BigDecimal getMonthSalaryInPLN(BigDecimal rateValue, BigDecimal monthSalaryAfterFixedCostAndTaxes) {
+    private BigDecimal convertToPln(BigDecimal rateValue, BigDecimal monthSalaryAfterFixedCostAndTaxes) {
         BigDecimal monthSalaryInPLN = monthSalaryAfterFixedCostAndTaxes.multiply(rateValue);
         return monthSalaryInPLN.setScale(2, RoundingMode.HALF_UP);
     }

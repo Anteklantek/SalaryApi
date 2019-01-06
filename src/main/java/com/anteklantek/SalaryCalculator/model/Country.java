@@ -1,7 +1,9 @@
 package com.anteklantek.SalaryCalculator.model;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,6 +14,8 @@ import java.math.BigDecimal;
 
 @Entity
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonPropertyOrder(value = {"name", "fixedCost", "tax", "currencyCode"})
 public class Country {
 

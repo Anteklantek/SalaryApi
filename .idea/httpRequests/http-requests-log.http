@@ -1,0 +1,66 @@
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035507.400.txt
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035452.400.txt
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=asc
+
+<> 2019-01-06T035443.400.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035315.400.txt
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035128.200.txt
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035055.200.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+<> 2019-01-06T035027.200.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=221.23
+
+<> 2019-01-05T123947.200.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=221.23
+
+<> 2019-01-04T113538.200.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=221.23
+
+<> 2019-01-04T101200.200.json
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=221.23
+
+<> 2019-01-04T101143.200.json
+
+###
+

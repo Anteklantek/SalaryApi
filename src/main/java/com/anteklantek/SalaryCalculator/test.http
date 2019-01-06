@@ -1,3 +1,11 @@
 GET http://localhost:8090/salary?dayGrossSalary=221.23
 
 ###
+
+GET http://localhost:8090/salary?dayGrossSalary=-21
+
+###
+
+GET http://localhost:8090/salary?dayGrossSalary=asc
+
+###

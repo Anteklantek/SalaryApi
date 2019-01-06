@@ -6,16 +6,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.math.BigDecimal;
 
 @RestController
 @Slf4j
 @CrossOrigin
+@Validated
 public class SalaryController {
 
     @Autowired
@@ -23,7 +25,14 @@ public class SalaryController {
 
 
     @GetMapping(path = "/salary", produces = "application/json")
-    public ResponseEntity<SalaryListViewModel> getRate(@RequestParam BigDecimal dayGrossSalary) {
-        return new ResponseEntity<>(salaryCalculatorService.getMonthSalariesForDayGrossSalary(dayGrossSalary), HttpStatus.OK);
+    public ResponseEntity<SalaryListViewModel> getRate(@RequestParam @Valid @Min(0) BigDecimal dayGrossSalary) {
+        SalaryListViewModel salaryListViewModel = salaryCalculatorService.getMonthSalariesForDayGrossSalary(dayGrossSalary);
+        return new ResponseEntity<>(salaryListViewModel, HttpStatus.OK);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> constraintViolationHandler(ConstraintViolationException ex) {
+        return new ResponseEntity<>(ex.getConstraintViolations().iterator().next().getPropertyPath() + " " +
+                ex.getConstraintViolations().iterator().next().getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
