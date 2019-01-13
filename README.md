@@ -1,5 +1,5 @@
 # SalaryApi
-This serves as a calculation service for money-ng-app frontend
+This serves as a calculation service for [money-ng-app frontend](https://github.com/Anteklantek/SalaryFrontend)
 
 ## Running
 ```
